@@ -1,0 +1,6 @@
+{
+  "name": "Kids English Adventure",
+  "description": "7岁儿童英语互动学习与检测平台（涵盖自然拼读、主题词汇、经典句型、高频词、配套故事读本与关卡测试）",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
