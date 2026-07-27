@@ -9,6 +9,7 @@ interface HeaderProps {
   activeTab: 'vocab' | 'sentences' | 'phonics' | 'reader' | 'quiz';
   onSelectTab: (tab: 'vocab' | 'sentences' | 'phonics' | 'reader' | 'quiz') => void;
   starsByUnit: Record<number, number>;
+  unitStarsDetail?: Record<number, { vocab?: number; sentences?: number; quiz?: number }>;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,10 +19,12 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   onSelectTab,
   starsByUnit,
+  unitStarsDetail = {},
 }) => {
   const currentUnit = units.find(u => u.id === currentUnitId) || units[0];
   const completedUnitsCount = units.filter(u => (starsByUnit[u.id] || 0) > 0).length;
   const unitProgress = Math.round((completedUnitsCount / units.length) * 100);
+  const curDetail = unitStarsDetail[currentUnitId] || {};
 
   return (
     <header className="bg-white rounded-3xl shadow-xl shadow-sky-100/70 p-4 sm:p-6 mb-6 border-b-4 border-sky-100 border-x border-t">
@@ -31,12 +34,17 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-md shadow-indigo-200">
             A+
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <h1 className="text-xl sm:text-2xl font-black text-indigo-900 tracking-tight flex items-center gap-2">
-              Junior English Explorer
+              {currentUnit.title}
             </h1>
-            <p className="text-xs sm:text-sm font-bold text-sky-600 uppercase tracking-wider">
-              {currentUnit ? currentUnit.title : '7岁英语互动学习乐园'}
+            <p
+              className="text-xs sm:text-sm font-bold tracking-wide mt-1 leading-relaxed w-full"
+              style={{ color: '#928FC2' }}
+            >
+              {currentUnit.topicSentences && currentUnit.topicSentences.length > 0
+                ? currentUnit.topicSentences.map(s => s.sampleQuestion || s.question).join('   •   ')
+                : currentUnit.subtitle}
             </p>
           </div>
         </div>
@@ -79,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>Unit {u.id}</span>
                 {stars > 0 && (
                   <span className="bg-amber-100 text-amber-800 border border-amber-300 font-black px-2 py-0.5 rounded-full text-[10px] flex items-center gap-0.5 shadow-sm">
-                    ⭐ {stars}
+                    ⭐ {stars}/10
                   </span>
                 )}
               </button>
@@ -92,26 +100,40 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1">
         <button
           onClick={() => onSelectTab('vocab')}
-          className={`px-3 py-3 rounded-2xl font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 transition-all ${
+          className={`px-3 py-3 rounded-2xl font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 transition-all relative ${
             activeTab === 'vocab'
               ? 'bg-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg ring-4 ring-indigo-100 font-black'
               : 'bg-white hover:bg-sky-50 text-indigo-900 border-2 border-sky-200'
           }`}
         >
           <BookText className="w-5 h-5" />
-          <span>主题词汇 Vocabulary</span>
+          <div className="flex items-center gap-1">
+            <span>主题词汇 Vocabulary</span>
+            {curDetail.vocab !== undefined && curDetail.vocab > 0 && (
+              <span className="text-[10px] font-black bg-amber-300 text-indigo-950 px-1.5 py-0.5 rounded-full shadow-xs">
+                ⭐{curDetail.vocab}/3
+              </span>
+            )}
+          </div>
         </button>
 
         <button
           onClick={() => onSelectTab('sentences')}
-          className={`px-3 py-3 rounded-2xl font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 transition-all ${
+          className={`px-3 py-3 rounded-2xl font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 transition-all relative ${
             activeTab === 'sentences'
               ? 'bg-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg ring-4 ring-indigo-100 font-black'
               : 'bg-white hover:bg-sky-50 text-indigo-900 border-2 border-sky-200'
           }`}
         >
           <MessageSquare className="w-5 h-5" />
-          <span>重点句型 Sentences</span>
+          <div className="flex items-center gap-1">
+            <span>重点句型 Sentences</span>
+            {curDetail.sentences !== undefined && curDetail.sentences > 0 && (
+              <span className="text-[10px] font-black bg-amber-300 text-indigo-950 px-1.5 py-0.5 rounded-full shadow-xs">
+                ⭐{curDetail.sentences}/4
+              </span>
+            )}
+          </div>
         </button>
 
         <button
@@ -140,14 +162,21 @@ export const Header: React.FC<HeaderProps> = ({
 
         <button
           onClick={() => onSelectTab('quiz')}
-          className={`col-span-2 sm:col-span-1 px-3 py-3 rounded-2xl font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 transition-all ${
+          className={`col-span-2 sm:col-span-1 px-3 py-3 rounded-2xl font-bold text-xs sm:text-sm flex flex-col items-center justify-center gap-1.5 transition-all relative ${
             activeTab === 'quiz'
               ? 'bg-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg ring-4 ring-indigo-100 font-black'
               : 'bg-white hover:bg-sky-50 text-indigo-900 border-2 border-sky-200'
           }`}
         >
           <CheckCircle className="w-5 h-5" />
-          <span>考考你 Quiz</span>
+          <div className="flex items-center gap-1">
+            <span>考考你 Quiz</span>
+            {curDetail.quiz !== undefined && curDetail.quiz > 0 && (
+              <span className="text-[10px] font-black bg-amber-300 text-indigo-950 px-1.5 py-0.5 rounded-full shadow-xs">
+                ⭐{curDetail.quiz}/3
+              </span>
+            )}
+          </div>
         </button>
       </div>
     </header>

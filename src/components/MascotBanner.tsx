@@ -6,25 +6,27 @@ import { downloadAppAsHtml } from '../utils/exportHtml';
 interface MascotProps {
   unitId: number;
   unitTitle: string;
+  unitSubtitle?: string;
   totalStars: number;
-  speechSpeed: number;
+  speechSpeed?: number;
   onReset?: () => void;
 }
 
 export const MascotBanner: React.FC<MascotProps> = ({
+  unitId,
   unitTitle,
   totalStars,
-  speechSpeed,
+  speechSpeed = 0.75,
   onReset,
 }) => {
-  const [mascotMsg, setMascotMsg] = useState("Hi! I'm Buddy! Let's learn English together! Click me to hear a tip!");
+  const [mascotMsg, setMascotMsg] = useState("Hi! I'm Andy! Let's learn English together! Click me to hear a tip!");
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const mascotTips = [
     "Tip: Click any English word to hear how it sounds!",
     "Great job practicing! You earn stars by completing Unit Quizzes!",
     "Phonics helps us read new words! Listen carefully to the sounds!",
-    "Try saying the sentences out loud after Buddy!"
+    "Try saying the sentences out loud after Andy!"
   ];
 
   const handleMascotClick = () => {
@@ -36,9 +38,9 @@ export const MascotBanner: React.FC<MascotProps> = ({
   return (
     <div className="bg-indigo-900 border-2 border-indigo-700/80 rounded-3xl p-4 sm:p-5 shadow-xl shadow-indigo-950/20 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-white">
       <div className="flex items-center gap-4 cursor-pointer group" onClick={handleMascotClick}>
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-600 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl shadow-lg border-2 border-indigo-400 group-hover:scale-105 transition-transform">
-            🐻
+            👦
           </div>
           <div className="absolute -bottom-1 -right-1 bg-emerald-400 text-indigo-950 p-1.5 rounded-xl shadow-md border border-white">
             <Volume2 className="w-4 h-4 font-black" />
@@ -46,8 +48,8 @@ export const MascotBanner: React.FC<MascotProps> = ({
         </div>
 
         <div>
-          <div className="flex items-center gap-2">
-            <span className="font-black text-white text-lg sm:text-xl tracking-tight">Buddy the Bear</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-black text-white text-lg sm:text-xl tracking-tight">Andy the boy</span>
             <span className="bg-indigo-800 text-indigo-200 text-xs px-3 py-1 rounded-xl font-bold flex items-center gap-1 border border-indigo-700">
               <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> {unitTitle}
             </span>
@@ -58,7 +60,7 @@ export const MascotBanner: React.FC<MascotProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 w-full sm:w-auto justify-end flex-shrink-0">
         <button
           onClick={downloadAppAsHtml}
           title="导出/下载 HTML 文件"

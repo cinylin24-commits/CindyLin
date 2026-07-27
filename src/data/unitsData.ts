@@ -4,7 +4,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 1 =================
   {
     id: 1,
-    title: 'Unit 1: Food & Jobs',
+    title: 'Unit 1️⃣ Food & Jobs',
     subtitle: '食物与职业 (sh / ch 发音)',
     phonics: [
       {
@@ -163,7 +163,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 2 =================
   {
     id: 2,
-    title: 'Unit 2: Places & Rooms',
+    title: 'Unit 2️⃣ Places & Rooms',
     subtitle: '物品与工作场所 (ch 复习 / th 发音)',
     phonics: [
       {
@@ -317,7 +317,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 3 =================
   {
     id: 3,
-    title: 'Unit 3: Transport & Stationery',
+    title: 'Unit 3️⃣ Transport & Stationery',
     subtitle: '文具与交通工具 (wh / ng 发音)',
     phonics: [
       {
@@ -469,7 +469,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 4 =================
   {
     id: 4,
-    title: 'Unit 4: Toys & House Rooms',
+    title: 'Unit 4️⃣ Toys & House Rooms',
     subtitle: '玩具与房间方位 (ng 复习 / oi, oy 发音)',
     phonics: [
       {
@@ -623,7 +623,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 5 =================
   {
     id: 5,
-    title: 'Unit 5: Features & Appearance',
+    title: 'Unit 5️⃣ Features & Appearance',
     subtitle: '物品特征与人物外貌 (ou, ow 发音)',
     phonics: [
       {
@@ -769,7 +769,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 6 =================
   {
     id: 6,
-    title: 'Unit 6: Animals & Sound Vowels',
+    title: 'Unit 6️⃣ Animals & Sound Vowels',
     subtitle: '陆地/海洋动物 (长短oo / ar, or发音)',
     phonics: [
       {
@@ -824,16 +824,16 @@ export const UNITS_DATA: UnitData[] = [
         question: 'What is it? What color is it?',
         answer: 'It is (a/an) ____. It is ____.',
         sampleQuestion: 'What is it? What color is it?',
-        sampleAnswer: 'It is a dolphin. It is blue.',
-        wordsToInsert: ['dolphin', 'starfish', 'crab', 'octopus', 'jellyfish']
+        sampleAnswer: 'It is a crab. It is green.',
+        wordsToInsert: ['crab', 'dolphin', 'starfish', 'octopus', 'jellyfish']
       },
       {
         id: 'u6-2',
-        question: 'What do dolphins look like?',
-        answer: 'They are ____ and ____.',
+        question: 'What do ____ look like?',
+        answer: 'They are ____.',
         sampleQuestion: 'What do sharks look like?',
-        sampleAnswer: 'They are big and gray.',
-        wordsToInsert: ['cute - clever', 'big - fast', 'small - pink', 'clever - friendly']
+        sampleAnswer: 'They are big and fast.',
+        wordsToInsert: ['sharks', 'dolphins', 'pandas', 'jellyfish']
       },
       {
         id: 'u6-3',
@@ -923,7 +923,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 7 =================
   {
     id: 7,
-    title: 'Unit 7: Actions & Sports',
+    title: 'Unit 7️⃣ Actions & Sports',
     subtitle: '动作与体育运动 (er, ir, ur 发音)',
     phonics: [
       {
@@ -1071,7 +1071,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 8 =================
   {
     id: 8,
-    title: 'Unit 8: Numbers & Days of Week',
+    title: 'Unit 8️⃣ Numbers & Days of Week',
     subtitle: '数字与星期 (are/air, eer/ear, y 发音)',
     phonics: [
       {
@@ -1125,7 +1125,7 @@ export const UNITS_DATA: UnitData[] = [
         answer: 'There are seven days in a week.',
         sampleQuestion: 'How many days are there in a week?',
         sampleAnswer: 'There are seven days in a week.',
-        wordsToInsert: ['seven days', 'twelve months', 'twenty stars']
+        wordsToInsert: ['seven days']
       },
       {
         id: 'u8-2',
@@ -1156,8 +1156,8 @@ export const UNITS_DATA: UnitData[] = [
         question: 'What do you do on the weekend?',
         answer: 'I ____ on the weekend.',
         sampleQuestion: 'What do you do on the weekend?',
-        sampleAnswer: 'I read books on the weekend.',
-        wordsToInsert: ['read books', 'play basketball', 'swim', 'do yoga']
+        sampleAnswer: 'I read book on the weekend.',
+        wordsToInsert: ['read book', 'play basketball', 'swim', 'do yoga']
       }
     ],
     reader: {
@@ -1223,7 +1223,7 @@ export const UNITS_DATA: UnitData[] = [
   // ================= UNIT 9 =================
   {
     id: 9,
-    title: 'Unit 9: Seasons & Comprehensive Review',
+    title: 'Unit 9️⃣ Seasons & Comprehensive Review',
     subtitle: '季节与综合复习 (全套发音与大检测)',
     phonics: [
       {
@@ -1273,11 +1273,11 @@ export const UNITS_DATA: UnitData[] = [
       },
       {
         id: 'u9-2',
-        question: 'How\'s the weather in the winter?',
-        answer: 'It\'s cold and snowy.',
-        sampleQuestion: 'How\'s the weather in the winter?',
+        question: 'How\'s the weather in ____?',
+        answer: 'It\'s ____.',
+        sampleQuestion: 'How\'s the weather in winter?',
         sampleAnswer: 'It\'s cold and snowy.',
-        wordsToInsert: ['sunny and warm', 'hot and sunny', 'cool and windy', 'cold and snowy']
+        wordsToInsert: ['winter', 'spring', 'summer', 'fall']
       },
       {
         id: 'u9-3',
@@ -1289,11 +1289,11 @@ export const UNITS_DATA: UnitData[] = [
       },
       {
         id: 'u9-4',
-        question: 'What do you wear in the winter?',
-        answer: 'I wear a jacket and hat in the winter.',
-        sampleQuestion: 'What do you wear in the winter?',
-        sampleAnswer: 'I wear a jacket and hat in the winter.',
-        wordsToInsert: ['jacket', 'hat', 'socks', 'coat']
+        question: 'What do you wear in winter?',
+        answer: 'I wear a ____ in winter.',
+        sampleQuestion: 'What do you wear in winter?',
+        sampleAnswer: 'I wear a jacket in winter.',
+        wordsToInsert: ['jacket', 'coat', 'hat', 'socks']
       },
       {
         id: 'u9-5',

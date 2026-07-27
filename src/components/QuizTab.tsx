@@ -7,7 +7,7 @@ import { speakText, sfx } from '../utils/speech';
 interface QuizTabProps {
   unit: UnitData;
   speechSpeed: number;
-  onCompleteQuiz: (unitId: number, stars: number) => void;
+  onCompleteQuiz: (unitId: number, category: 'vocab' | 'sentences' | 'quiz', stars: number) => void;
   onNextUnit?: () => void;
 }
 
@@ -248,10 +248,10 @@ export const QuizTab: React.FC<QuizTabProps> = ({
     } else {
       // Quiz Finished!
       const total = questions.length;
-      const stars = score === total ? 3 : score >= Math.ceil(total / 2) ? 2 : 1;
+      const stars = score === total ? 3 : score >= Math.ceil(total / 2) ? 2 : score >= 1 ? 1 : 0;
 
       setIsFinished(true);
-      onCompleteQuiz(unit.id, stars);
+      onCompleteQuiz(unit.id, 'quiz', stars);
 
       if (stars >= 2) {
         sfx.playFanfare();
@@ -488,7 +488,7 @@ export const QuizTab: React.FC<QuizTabProps> = ({
           <div className="flex items-center justify-center gap-2 text-4xl">
             {[1, 2, 3].map((star) => {
               const total = questions.length;
-              const earnedStars = score === total ? 3 : score >= Math.ceil(total / 2) ? 2 : 1;
+              const earnedStars = score === total ? 3 : score >= Math.ceil(total / 2) ? 2 : score >= 1 ? 1 : 0;
               return (
                 <span
                   key={star}
@@ -501,6 +501,9 @@ export const QuizTab: React.FC<QuizTabProps> = ({
               );
             })}
           </div>
+          <p className="text-xs font-bold text-sky-800">
+            单元测试获得：{score === questions.length ? 3 : score >= Math.ceil(questions.length / 2) ? 2 : score >= 1 ? 1 : 0} / 3 颗星 ⭐
+          </p>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">

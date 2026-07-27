@@ -14,11 +14,22 @@ export default function App() {
   const [speechSpeed, setSpeechSpeed] = useState<number>(0.75); // 0.75 for clear kid-friendly pronunciation
   const [resetKey, setResetKey] = useState<number>(0);
 
-  // Progress state initialized from localStorage
-  const [starsByUnit, setStarsByUnit] = useState<Record<number, number>>(() => {
+  // Detail progress state: unitId -> { vocab, sentences, quiz }
+  const [unitStarsDetail, setUnitStarsDetail] = useState<Record<number, { vocab?: number; sentences?: number; quiz?: number }>>(() => {
     try {
-      const saved = localStorage.getItem('kids_english_stars');
-      return saved ? JSON.parse(saved) : {};
+      const savedDetail = localStorage.getItem('kids_english_stars_detail');
+      if (savedDetail) return JSON.parse(savedDetail);
+
+      const oldSaved = localStorage.getItem('kids_english_stars');
+      if (oldSaved) {
+        const parsed: Record<number, number> = JSON.parse(oldSaved);
+        const migrated: Record<number, { vocab?: number; sentences?: number; quiz?: number }> = {};
+        Object.entries(parsed).forEach(([uId, val]) => {
+          migrated[Number(uId)] = { quiz: val };
+        });
+        return migrated;
+      }
+      return {};
     } catch {
       return {};
     }
@@ -26,21 +37,42 @@ export default function App() {
 
   const currentUnit = UNITS_DATA.find(u => u.id === currentUnitId) || UNITS_DATA[0];
 
+  // Map of total stars per unit (sum of vocab 3 + sentences 4 + quiz 3 = max 10 per unit)
+  const starsByUnit = React.useMemo(() => {
+    const map: Record<number, number> = {};
+    UNITS_DATA.forEach(u => {
+      const d = unitStarsDetail[u.id];
+      map[u.id] = d ? (d.vocab || 0) + (d.sentences || 0) + (d.quiz || 0) : 0;
+    });
+    return map;
+  }, [unitStarsDetail]);
+
   const totalStars = Object.values(starsByUnit).reduce((acc: number, curr: number) => acc + curr, 0);
 
-  const handleToggleSpeed = () => {
-    setSpeechSpeed(prev => (prev < 0.85 ? 1.0 : 0.75));
-  };
+  const handleChallengeComplete = (
+    unitId: number,
+    category: 'vocab' | 'sentences' | 'quiz',
+    stars: number
+  ) => {
+    setUnitStarsDetail(prev => {
+      const currentDetail = prev[unitId] || { vocab: 0, sentences: 0, quiz: 0 };
+      const newCategoryStars = Math.max(currentDetail[category] || 0, stars);
+      const updatedUnitDetail = { ...currentDetail, [category]: newCategoryStars };
+      const updatedAll = { ...prev, [unitId]: updatedUnitDetail };
 
-  const handleQuizComplete = (unitId: number, stars: number) => {
-    setStarsByUnit(prev => {
-      const updated = { ...prev, [unitId]: Math.max(prev[unitId] || 0, stars) };
       try {
-        localStorage.setItem('kids_english_stars', JSON.stringify(updated));
+        localStorage.setItem('kids_english_stars_detail', JSON.stringify(updatedAll));
+
+        const starsSumMap: Record<number, number> = {};
+        UNITS_DATA.forEach(u => {
+          const d = updatedAll[u.id];
+          starsSumMap[u.id] = d ? (d.vocab || 0) + (d.sentences || 0) + (d.quiz || 0) : 0;
+        });
+        localStorage.setItem('kids_english_stars', JSON.stringify(starsSumMap));
       } catch (e) {
         console.error(e);
       }
-      return updated;
+      return updatedAll;
     });
   };
 
@@ -50,7 +82,7 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
-    setStarsByUnit({});
+    setUnitStarsDetail({});
     setCurrentUnitId(1);
     setActiveTab('vocab');
     setSpeechSpeed(0.75);
@@ -74,6 +106,7 @@ export default function App() {
         <MascotBanner
           unitId={currentUnitId}
           unitTitle={currentUnit.title}
+          unitSubtitle={currentUnit.subtitle}
           totalStars={totalStars}
           speechSpeed={speechSpeed}
           onReset={handleResetData}
@@ -90,6 +123,7 @@ export default function App() {
           activeTab={activeTab}
           onSelectTab={setActiveTab}
           starsByUnit={starsByUnit}
+          unitStarsDetail={unitStarsDetail}
         />
 
         {/* Workspace Card for Content */}
@@ -98,12 +132,16 @@ export default function App() {
             <VocabularyTab
               unit={currentUnit}
               speechSpeed={speechSpeed}
-              onCompleteChallenge={handleQuizComplete}
+              onCompleteChallenge={handleChallengeComplete}
             />
           )}
 
           {activeTab === 'sentences' && (
-            <SentencesTab unit={currentUnit} speechSpeed={speechSpeed} />
+            <SentencesTab
+              unit={currentUnit}
+              speechSpeed={speechSpeed}
+              onCompleteChallenge={handleChallengeComplete}
+            />
           )}
 
           {activeTab === 'phonics' && (
@@ -118,7 +156,7 @@ export default function App() {
             <QuizTab
               unit={currentUnit}
               speechSpeed={speechSpeed}
-              onCompleteQuiz={handleQuizComplete}
+              onCompleteQuiz={handleChallengeComplete}
               onNextUnit={handleNextUnit}
             />
           )}

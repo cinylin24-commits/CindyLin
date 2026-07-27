@@ -7,7 +7,7 @@ import { speakText, sfx } from '../utils/speech';
 interface VocabularyTabProps {
   unit: UnitData;
   speechSpeed: number;
-  onCompleteChallenge?: (unitId: number, stars: number) => void;
+  onCompleteChallenge?: (unitId: number, category: 'vocab' | 'sentences' | 'quiz', stars: number) => void;
 }
 
 export const VocabularyTab: React.FC<VocabularyTabProps> = ({
@@ -72,9 +72,9 @@ export const VocabularyTab: React.FC<VocabularyTabProps> = ({
       origin: { y: 0.5 }
     });
 
-    const earnedStars = finalCorrect >= 15 ? 3 : finalCorrect >= 10 ? 2 : 1;
+    const earnedStars = finalCorrect >= 15 ? 3 : finalCorrect >= 10 ? 2 : finalCorrect >= 1 ? 1 : 0;
     if (onCompleteChallenge) {
-      onCompleteChallenge(unit.id, earnedStars);
+      onCompleteChallenge(unit.id, 'vocab', earnedStars);
     }
   };
 
@@ -236,6 +236,26 @@ export const VocabularyTab: React.FC<VocabularyTabProps> = ({
               </h3>
               <p className="text-sm text-indigo-200 font-bold max-w-md mx-auto">
                 你太棒啦！一共答对 <span className="text-amber-300 font-black text-lg">{correctCount}</span> / 20 题，斩获 <span className="text-emerald-400 font-black text-lg">{gameScore}</span> 分！
+              </p>
+
+              {/* Star Rating Display */}
+              <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl pt-1">
+                {[1, 2, 3].map((star) => {
+                  const earnedStars = correctCount >= 15 ? 3 : correctCount >= 10 ? 2 : correctCount >= 1 ? 1 : 0;
+                  return (
+                    <span
+                      key={star}
+                      className={`transition-all transform hover:scale-125 ${
+                        star <= earnedStars ? 'text-amber-300 drop-shadow-md' : 'text-indigo-900/60'
+                      }`}
+                    >
+                      ★
+                    </span>
+                  );
+                })}
+              </div>
+              <p className="text-xs font-bold text-amber-200">
+                单词测试获得：{correctCount >= 15 ? 3 : correctCount >= 10 ? 2 : correctCount >= 1 ? 1 : 0} / 3 颗星 ⭐
               </p>
             </div>
 

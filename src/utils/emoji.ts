@@ -51,6 +51,7 @@ const EMOJI_MAP: Record<string, string> = {
 
   // Animals
   'dolphin': '🐬',
+  'dolphins': '🐬',
   'starfish': '⭐',
   'crab': '🦀',
   'octopus': '🐙',
@@ -58,6 +59,7 @@ const EMOJI_MAP: Record<string, string> = {
   'shark': '🦈',
   'sharks': '🦈',
   'panda': '🐼',
+  'pandas': '🐼',
   'koala': '🐨',
   'elephant': '🐘',
 
@@ -81,6 +83,7 @@ const EMOJI_MAP: Record<string, string> = {
   'ride my bike': '🚲',
   'skate': '⛸️',
   'read books': '📖',
+  'read book': '📖',
   'play basketball': '🏀',
   'do yoga': '🧘',
 

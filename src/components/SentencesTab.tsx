@@ -9,6 +9,7 @@ import { UNITS_DATA } from '../data/unitsData';
 interface SentencesTabProps {
   unit: UnitData;
   speechSpeed: number;
+  onCompleteChallenge?: (unitId: number, category: 'vocab' | 'sentences' | 'quiz', stars: number) => void;
 }
 
 interface SentenceQAItem {
@@ -38,7 +39,36 @@ const JOB_WORKPLACES: Record<string, { question: string; answer: string }> = {
   'baker': { question: 'Where does a baker work?', answer: 'A baker works at a bakery.' },
 };
 
-export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed }) => {
+const SEASON_WEATHER: Record<string, { question: string; answer: string; seasonQuestion: string; seasonAnswer: string }> = {
+  'winter': { question: "How's the weather in winter?", answer: "It's cold and snowy.", seasonQuestion: "Which season is cold and snowy?", seasonAnswer: "Winter is cold and snowy." },
+  'spring': { question: "How's the weather in spring?", answer: "It's sunny and warm.", seasonQuestion: "Which season is sunny and warm?", seasonAnswer: "Spring is sunny and warm." },
+  'summer': { question: "How's the weather in summer?", answer: "It's hot and sunny.", seasonQuestion: "Which season is hot and sunny?", seasonAnswer: "Summer is hot and sunny." },
+  'fall': { question: "How's the weather in fall?", answer: "It's cool and windy.", seasonQuestion: "Which season is cool and windy?", seasonAnswer: "Fall is cool and windy." },
+};
+
+const ANIMAL_COLORS: Record<string, { question: string; answer: string }> = {
+  'crab': { question: 'What is it? What color is it?', answer: 'It is a crab. It is green.' },
+  'dolphin': { question: 'What is it? What color is it?', answer: 'It is a dolphin. It is blue.' },
+  'starfish': { question: 'What is it? What color is it?', answer: 'It is a starfish. It is yellow.' },
+  'octopus': { question: 'What is it? What color is it?', answer: 'It is an octopus. It is purple.' },
+  'jellyfish': { question: 'What is it? What color is it?', answer: 'It is a jellyfish. It is pink.' },
+};
+
+const ANIMAL_LOOKS: Record<string, { question: string; answer: string }> = {
+  'sharks': { question: 'What do sharks look like?', answer: 'They are big and fast.' },
+  'dolphins': { question: 'What do dolphins look like?', answer: 'They are clever and friendly.' },
+  'pandas': { question: 'What do pandas look like?', answer: 'They are cute and clever.' },
+  'jellyfish': { question: 'What do jellyfish look like?', answer: 'They are small and pink.' },
+};
+
+const WINTER_CLOTHES: Record<string, { question: string; answer: string }> = {
+  'jacket': { question: 'What do you wear in winter?', answer: 'I wear a jacket in winter.' },
+  'coat': { question: 'What do you wear in winter?', answer: 'I wear a coat in winter.' },
+  'hat': { question: 'What do you wear in winter?', answer: 'I wear a hat in winter.' },
+  'socks': { question: 'What do you wear in winter?', answer: 'I wear socks in winter.' },
+};
+
+export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed, onCompleteChallenge }) => {
   // State for Requirement 4: Active selected word per pattern ID
   const [activeWords, setActiveWords] = useState<Record<string, string>>({});
 
@@ -61,6 +91,51 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
     }
     if (JOB_WORKPLACES[lowerWord] && (pattern.question.includes('Where does a') || pattern.id === 'u2-2')) {
       return JOB_WORKPLACES[lowerWord].question;
+    }
+
+    // Seasons: Requirement 3
+    if (SEASON_WEATHER[lowerWord] && (pattern.question.includes('Which season is') || pattern.id === 'u9-5')) {
+      return SEASON_WEATHER[lowerWord].seasonQuestion;
+    }
+    if (SEASON_WEATHER[lowerWord] && (pattern.question.includes("How's the weather") || pattern.id === 'u9-2')) {
+      return SEASON_WEATHER[lowerWord].question;
+    }
+
+    // Appearance logic: u5-2
+    if (pattern.id === 'u5-2' || (pattern.question.includes('look like') && pattern.wordsToInsert?.includes('handsome'))) {
+      if (lowerWord === 'handsome') return 'What does he look like?';
+      return 'What does she look like?';
+    }
+
+    // Hair choice: Requirement 4
+    if (pattern.id === 'u5-5' || pattern.question.includes('Does she have')) {
+      if (lowerWord === 'long' || lowerWord === 'short') {
+        return 'Does she have short hair or long hair?';
+      }
+      if (lowerWord === 'curly' || lowerWord === 'straight') {
+        return 'Does she have curly hair or straight hair?';
+      }
+    }
+
+    // Hair look: Requirement 5
+    if (pattern.id === 'u5-3' || pattern.question.includes('hair look like')) {
+      return 'What does her hair look like?';
+    }
+
+    // Appearance / height logic: Requirement 6
+    if (pattern.id === 'u5-4' || pattern.question.includes('Is he tall') || pattern.question.includes('Is she tall')) {
+      if (lowerWord === 'short' || lowerWord === 'tall') return 'Is he tall?';
+      if (lowerWord === 'thin') return 'Is he thin?';
+    }
+
+    if (ANIMAL_COLORS[lowerWord] && (pattern.question.includes('What color is it') || pattern.id === 'u6-1')) {
+      return ANIMAL_COLORS[lowerWord].question;
+    }
+    if (ANIMAL_LOOKS[lowerWord] && (pattern.question.includes('look like') || pattern.id === 'u6-2')) {
+      return ANIMAL_LOOKS[lowerWord].question;
+    }
+    if (WINTER_CLOTHES[lowerWord] && (pattern.question.includes('What do you wear in') || pattern.id === 'u9-4')) {
+      return WINTER_CLOTHES[lowerWord].question;
     }
 
     let base = pattern.sampleQuestion || pattern.question;
@@ -91,6 +166,56 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
       return JOB_WORKPLACES[lowerWord].answer;
     }
 
+    // Seasons: Requirement 3
+    if (SEASON_WEATHER[lowerWord] && (pattern.question.includes('Which season is') || pattern.id === 'u9-5')) {
+      return SEASON_WEATHER[lowerWord].seasonAnswer;
+    }
+    if (SEASON_WEATHER[lowerWord] && (pattern.question.includes("How's the weather") || pattern.id === 'u9-2')) {
+      return SEASON_WEATHER[lowerWord].answer;
+    }
+
+    // Appearance logic: u5-2
+    if (pattern.id === 'u5-2' || (pattern.question.includes('look like') && pattern.wordsToInsert?.includes('handsome'))) {
+      if (lowerWord === 'handsome') return "He's handsome and tall.";
+      if (lowerWord === 'beautiful') return "She's beautiful and tall.";
+      if (lowerWord === 'tall') return "She's tall and beautiful.";
+      if (lowerWord === 'short') return "She's short and thin.";
+      if (lowerWord === 'thin') return "He's tall and thin.";
+    }
+
+    // Hair choice: Requirement 4
+    if (pattern.id === 'u5-5' || pattern.question.includes('Does she have')) {
+      if (lowerWord === 'long') return 'She has long hair.';
+      if (lowerWord === 'short') return 'She has short hair.';
+      if (lowerWord === 'curly') return 'She has curly hair.';
+      if (lowerWord === 'straight') return 'She has straight hair.';
+    }
+
+    // Hair look: Requirement 5
+    if (pattern.id === 'u5-3' || pattern.question.includes('hair look like')) {
+      if (lowerWord === 'straight') return 'Her hair is long and straight.';
+      if (lowerWord === 'curly') return 'Her hair is long and curly.';
+      if (lowerWord === 'short') return 'Her hair is short and straight.';
+      if (lowerWord === 'long') return 'Her hair is long and curly.';
+    }
+
+    // Appearance / height logic: Requirement 6
+    if (pattern.id === 'u5-4' || pattern.question.includes('Is he tall') || pattern.question.includes('Is she tall')) {
+      if (lowerWord === 'short') return "No, he isn't. He is short.";
+      if (lowerWord === 'tall') return "Yes, he is. He is tall.";
+      if (lowerWord === 'thin') return "Yes, he is. He is thin.";
+    }
+
+    if (ANIMAL_COLORS[lowerWord] && (pattern.question.includes('What color is it') || pattern.id === 'u6-1')) {
+      return ANIMAL_COLORS[lowerWord].answer;
+    }
+    if (ANIMAL_LOOKS[lowerWord] && (pattern.question.includes('look like') || pattern.id === 'u6-2')) {
+      return ANIMAL_LOOKS[lowerWord].answer;
+    }
+    if (WINTER_CLOTHES[lowerWord] && (pattern.question.includes('What do you wear in') || pattern.id === 'u9-4')) {
+      return WINTER_CLOTHES[lowerWord].answer;
+    }
+
     let base = pattern.sampleAnswer || pattern.answer;
     if (base.includes('____')) {
       return base.replace('____', activeWord);
@@ -113,13 +238,20 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
     speakSequence([filledQuestion, filledAnswer], speechSpeed);
   };
 
-  // Helper to highlight replacement word inside a sentence
+  // Helper to highlight replacement word inside a sentence with exact word boundary matching
   const renderHighlightedSentence = (fullText: string, activeWord: string) => {
-    if (!activeWord || !fullText.toLowerCase().includes(activeWord.toLowerCase())) {
+    if (!activeWord) {
       return <span>{fullText}</span>;
     }
 
-    const parts = fullText.split(new RegExp(`(${activeWord})`, 'gi'));
+    const escaped = activeWord.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(\\b${escaped}\\b)`, 'gi');
+
+    if (!regex.test(fullText)) {
+      return <span>{fullText}</span>;
+    }
+
+    const parts = fullText.split(regex);
     return (
       <span>
         {parts.map((part, i) =>
@@ -234,12 +366,13 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
     if (opt === currentQ.correctAnswer) {
       sfx.playCorrect();
       setQaFeedback('correct');
+      const nextCorrect = qaCorrectCount + 1;
       setQaScore(s => s + 10);
-      setQaCorrectCount(c => c + 1);
+      setQaCorrectCount(nextCorrect);
 
       setTimeout(() => {
         if (qaIndex + 1 >= MAX_QA_QUESTIONS) {
-          triggerQAVictory();
+          triggerQAVictory(nextCorrect);
         } else {
           setQaIndex(i => i + 1);
           setQaFeedback(null);
@@ -252,7 +385,7 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
     }
   };
 
-  const triggerQAVictory = () => {
+  const triggerQAVictory = (finalCorrect = qaCorrectCount) => {
     setQaFinished(true);
     sfx.playFanfare();
     confetti({
@@ -260,6 +393,11 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
       spread: 85,
       origin: { y: 0.5 }
     });
+
+    const earnedStars = finalCorrect >= 18 ? 4 : finalCorrect >= 14 ? 3 : finalCorrect >= 10 ? 2 : finalCorrect >= 1 ? 1 : 0;
+    if (onCompleteChallenge) {
+      onCompleteChallenge(unit.id, 'sentences', earnedStars);
+    }
   };
 
   const currentQAItem = qaList[qaIndex];
@@ -408,6 +546,26 @@ export const SentencesTab: React.FC<SentencesTabProps> = ({ unit, speechSpeed })
               </h3>
               <p className="text-sm text-indigo-200 font-bold max-w-md mx-auto">
                 你一共答对了 <span className="text-amber-300 font-black text-lg">{qaCorrectCount}</span> / 20 题，斩获 <span className="text-emerald-400 font-black text-lg">{qaScore}</span> 分！
+              </p>
+
+              {/* Star Rating Display */}
+              <div className="flex items-center justify-center gap-2 text-3xl sm:text-4xl pt-1">
+                {[1, 2, 3, 4].map((star) => {
+                  const earnedStars = qaCorrectCount >= 18 ? 4 : qaCorrectCount >= 14 ? 3 : qaCorrectCount >= 10 ? 2 : qaCorrectCount >= 1 ? 1 : 0;
+                  return (
+                    <span
+                      key={star}
+                      className={`transition-all transform hover:scale-125 ${
+                        star <= earnedStars ? 'text-amber-300 drop-shadow-md' : 'text-indigo-900/60'
+                      }`}
+                    >
+                      ★
+                    </span>
+                  );
+                })}
+              </div>
+              <p className="text-xs font-bold text-amber-200">
+                句型挑战获得：{qaCorrectCount >= 18 ? 4 : qaCorrectCount >= 14 ? 3 : qaCorrectCount >= 10 ? 2 : qaCorrectCount >= 1 ? 1 : 0} / 4 颗星 ⭐
               </p>
             </div>
 
